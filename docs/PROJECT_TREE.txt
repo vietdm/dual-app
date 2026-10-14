@@ -135,6 +135,7 @@
 ├── .gitattributes
 ├── .gitignore
 ├── AGENTS.md
+├── LICENSE
 ├── README.md
 ├── build.gradle.kts
 ├── build.sh

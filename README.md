@@ -141,3 +141,14 @@ Use Android Settings → Accounts / Work Profile → Remove Work Profile (labels
 ## AI Memory
 
 Start with [docs/ai-memory/README.md](docs/ai-memory/README.md) and the five context files listed in AGENTS.md. They map modules, build commands, limitations and verified evidence without reading all sources. Trust code and reports over stale memory, and update memory when durable facts change.
+
+## License
+
+Dự án sử dụng [Dual Profile Non-Commercial License 1.0](LICENSE), mã SPDX tùy chỉnh `LicenseRef-DualProfile-NonCommercial-1.0`.
+
+- Được sử dụng, học tập, sao chép, chỉnh sửa và chia sẻ miễn phí cho **mục đích phi thương mại**.
+- **Không được kinh doanh/thương mại hóa**: bán, thu phí, quảng cáo kiếm tiền, cung cấp sản phẩm/dịch vụ trả phí hoặc dùng để phục vụ hoạt động kinh doanh. Hạn chế áp dụng cả bản sửa đổi tích hợp code của dự án.
+- Khi chia sẻ phải giữ LICENSE, thông tin bản quyền và ghi rõ nếu đã chỉnh sửa.
+- Muốn sử dụng thương mại phải có chấp thuận bằng văn bản riêng từ chủ sở hữu quyền tương ứng.
+
+Đây là giấy phép riêng dạng source-available/phi thương mại. Dependency, AndroidX/Kotlin/Compose và Gradle Wrapper vẫn giữ giấy phép của bên thứ ba; LICENSE này không thay đổi giấy phép của họ. Văn bản tiếng Anh trong LICENSE là điều khoản áp dụng, phần tiếng Việt ở đây là tóm tắt.

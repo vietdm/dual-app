@@ -2,6 +2,7 @@
 
 | Path | Responsibility / when to read |
 |---|---|
+| LICENSE, README.md License section | original-project non-commercial terms; third-party licenses excluded |
 | app/build.gradle.kts, root Gradle files | SDK, Compose, dependencies, release signing |
 | build.sh | Java/SDK validation, tests/lint/build, manifest/signature verify, dist |
 | app/src/main/AndroidManifest.xml | permissions, exposed/protected components, FileProvider |

@@ -1,0 +1,64 @@
+DUAL PROFILE NON-COMMERCIAL LICENSE
+Version 1.0
+SPDX-License-Identifier: LicenseRef-DualProfile-NonCommercial-1.0
+
+Copyright (c) 2026 the authors and copyright holders of Dual Profile.
+
+1. SCOPE
+
+This license applies to the original source code, resources, documentation,
+scripts, and other original materials of Dual Profile made available under
+this license, including their compiled forms (the "Software"). It does not
+replace the licenses of third-party libraries, tools, assets, or code. Those
+components remain governed by their respective licenses and notices.
+
+2. PERMITTED NON-COMMERCIAL USE
+
+Subject to these terms, the copyright holders grant you a worldwide,
+royalty-free, non-exclusive license to use, run, study, copy, modify, and
+create derivative works of the Software solely for non-commercial purposes.
+You may distribute the Software, including modified versions and compiled
+APKs, free of charge solely for non-commercial purposes, provided that you
+include this license and retain all applicable copyright and attribution
+notices. Modified distributions must clearly identify that they have been
+modified and must retain these non-commercial restrictions for the original
+Software and derivative works incorporating it.
+
+3. COMMERCIAL USE IS NOT PERMITTED
+
+No commercial rights are granted under this license. You must not sell,
+license for a fee, rent, monetize, or otherwise commercially exploit the
+Software, modified versions, or derivative works incorporating it.
+
+Commercial use includes use primarily intended for or directed toward
+commercial advantage, revenue, or monetary compensation; use in a paid
+product or service; subscriptions; advertising-based monetization; paid
+hosting or SaaS; and use to operate or support a business or other for-profit
+activity. Providing a copy free of charge does not make its use
+non-commercial when it supports such commercial activity.
+
+Commercial use requires a separate written authorization or license from
+the relevant copyright holders. This license itself provides no such
+authorization. Copyright holders retain their rights to offer their own work
+under separate terms. Nothing here restricts rights you independently hold
+in material you created without incorporating the Software, or rights that
+applicable law grants independently of this license.
+
+4. CONDITIONS AND TERMINATION
+
+You must not remove this license or applicable copyright notices from
+redistributed copies, or claim authorship of the original Software.
+No rights to trademarks or branding are granted by this license.
+
+Rights granted to you under this license terminate if you violate its terms.
+After termination you must stop using, modifying, and distributing the
+Software unless the relevant copyright holders authorize otherwise.
+
+5. DISCLAIMER
+
+TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE SOFTWARE IS PROVIDED "AS IS",
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE AUTHORS AND COPYRIGHT HOLDERS
+ARE NOT LIABLE FOR DAMAGES OR OTHER LIABILITY ARISING FROM THE SOFTWARE OR
+ITS USE.
