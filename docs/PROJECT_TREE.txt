@@ -132,6 +132,7 @@
 │   ├── generate-dev-keystore.sh
 │   ├── make-probe-splits.sh
 │   └── prepare-probe-native.sh
+├── .gitattributes
 ├── .gitignore
 ├── AGENTS.md
 ├── README.md
