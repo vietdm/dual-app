@@ -78,18 +78,18 @@ Open Dual Profile → Create Work Profile → accept the **real Android/Samsung 
 
 Test the supplied Probe before messaging applications. Save A in Personal and B in Work. Schedule its delayed notifications independently; kill only the Dual Profile host. Probe alarms are local notification smoke tests, **not push/Firebase validation**. For actual messaging/reboot push use a lawful app with two accounts and external senders. See [manual checklist](docs/MANUAL_TEST.md).
 
-## Cấp quyền cài APK custom trong Work
+## Allow custom APK installation in Work
 
-Sau khi user yêu cầu cấp quyền, ứng dụng cung cấp luồng **chủ động xác nhận**, không thay đổi bảo mật tự động:
+The app provides an **explicit consent flow** when you request installation permission. It does not change security settings automatically. The steps below describe the actions in English; the current permission screen uses Vietnamese labels.
 
-1. Mở Dual Profile ở Personal → **Quyền cài APK custom trong Work**.
-2. Bên Work, chọn **1. Cho phép APK custom trong Work** → đọc scope → **Cho phép trong Work**. DPC chỉ gỡ `DISALLOW_INSTALL_UNKNOWN_SOURCES` do **chính admin Dual Profile** quản lý trong Work. Không gỡ restriction global/install-apps/bên khác hoặc thay đổi Auto Blocker/Play Protect.
-3. Chọn **2. Cấp quyền nguồn cài đặt Android** → tự bật cho phép cài từ **Dual Profile bên Work** trong màn hình Android, nếu được policy cho phép.
-4. **Hoàn tất / quay lại** → refresh Work apps. Custom app đã cài trong Personal có APK đọc được sẽ dùng **Copy APK to Work** khi capability thực tế cho phép.
+1. Open Dual Profile in Personal and select the custom APK installation permissions action for Work.
+2. In Work, select the first action to allow custom APKs, review its scope, and confirm. The DPC clears only the Work-local `DISALLOW_INSTALL_UNKNOWN_SOURCES` restriction imposed by **Dual Profile itself**. It does not clear global restrictions, app-installation restrictions, or another administrator's policies, and does not change Auto Blocker or Play Protect.
+3. Select the second action to grant Android installation-source permission. In Android Settings, manually allow installation from **the Work instance of Dual Profile**, if device policy permits it.
+4. Finish or return, then refresh Work apps. A custom app already installed in Personal with readable APK files can use **Copy APK to Work** when the verified Work capabilities allow it.
 
-Nếu policy khác/OEM vẫn chặn, luồng báo hạn chế và không vượt qua. Không cần tài khoản Google cho copy APK. File APK chưa được cài vào Personal không nằm trong scanner của MVP; đây chưa phải tính năng import APK từ file picker.
+If another policy or OEM protection still blocks installation, the flow reports the restriction and does not bypass it. APK copying does not require a Google account. An APK file that has not been installed in Personal is outside the MVP scanner's scope; importing APKs through a file picker is not currently supported.
 
-Nút **Install via Work store** chỉ mở store; nó không copy APK. Nút **Copy APK to Work** mới chạy snapshot/URI transfer/PackageInstaller. CH Play trong Work có tài khoản/dữ liệu riêng; đăng nhập tài khoản Google khác không phải requirement của cơ chế copy APK.
+**Install via Work store** opens a store; it does not copy APKs. **Copy APK to Work** performs the APK snapshot, URI transfer, and PackageInstaller flow. Google Play in Work has separate account data; signing in with another Google account is not a requirement for APK copying.
 
 ## Work active / paused
 
@@ -144,11 +144,11 @@ Start with [docs/ai-memory/README.md](docs/ai-memory/README.md) and the five con
 
 ## License
 
-Dự án sử dụng [Dual Profile Non-Commercial License 1.0](LICENSE), mã SPDX tùy chỉnh `LicenseRef-DualProfile-NonCommercial-1.0`.
+This project uses the [Dual Profile Non-Commercial License 1.0](LICENSE), with the custom SPDX identifier `LicenseRef-DualProfile-NonCommercial-1.0`.
 
-- Được sử dụng, học tập, sao chép, chỉnh sửa và chia sẻ miễn phí cho **mục đích phi thương mại**.
-- **Không được kinh doanh/thương mại hóa**: bán, thu phí, quảng cáo kiếm tiền, cung cấp sản phẩm/dịch vụ trả phí hoặc dùng để phục vụ hoạt động kinh doanh. Hạn chế áp dụng cả bản sửa đổi tích hợp code của dự án.
-- Khi chia sẻ phải giữ LICENSE, thông tin bản quyền và ghi rõ nếu đã chỉnh sửa.
-- Muốn sử dụng thương mại phải có chấp thuận bằng văn bản riêng từ chủ sở hữu quyền tương ứng.
+- Use, study, copying, modification, and free redistribution are permitted for **non-commercial purposes**.
+- **Commercial exploitation is prohibited**, including selling, charging fees, advertising monetization, providing paid products or services, and use in support of business activities. These restrictions also apply to modified versions incorporating project code.
+- Redistributed copies must retain the LICENSE and copyright notices, and identify modifications.
+- Commercial use requires separate written authorization from the relevant copyright holders.
 
-Đây là giấy phép riêng dạng source-available/phi thương mại. Dependency, AndroidX/Kotlin/Compose và Gradle Wrapper vẫn giữ giấy phép của bên thứ ba; LICENSE này không thay đổi giấy phép của họ. Văn bản tiếng Anh trong LICENSE là điều khoản áp dụng, phần tiếng Việt ở đây là tóm tắt.
+This is a custom source-available, non-commercial license. Dependencies, AndroidX, Kotlin, Compose, and the Gradle Wrapper retain their respective third-party licenses; this LICENSE does not change those terms. The LICENSE contains the governing terms; this section is a summary.
