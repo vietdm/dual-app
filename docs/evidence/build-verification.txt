@@ -1,0 +1,14 @@
+Latest build.sh debug: exit0; APK manifest and apksigner verify succeeded.
+Unit tests: 21 passed, 0 failed.
+Lint: 0 errors, 34 warnings
+Release signing preflight: missing environment variables exits1 with required message.
+Missing SDK36 preflight: exits1 with explicit dependency message, no target downgrade.
+Shell syntax: build.sh and all scripts pass bash -n.
+Split fixtures: official Bundletool1.18.3 generated/extracted compatible Samsung arm64+language and alternative x86_64 sets; physical Work installation unexecuted due policy.
+
+Final APK installed successfully on physical SM-A576B.
+Final Personal instrumentation: 4 test cases, 3 executed successfully, 1 Work-profile-only assumption skipped; 0 failures. Android runner summary OK (4 tests).
+Executed: discovery/public profile APIs, MainActivity launch, rejecting fully-managed-only provisioning mode.
+Work-only owner/policy test could not run due Samsung shell user10 restriction; do not count as physical Work PASS.
+zipalign -c -P16 4: exit0 (16KB native ZIP alignment).
+Samsung-selected split APK signatures: apksigner verify exit0 for base-master_2, arm64_v8a, vi.

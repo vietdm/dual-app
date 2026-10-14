@@ -1,0 +1,13 @@
+Date: 2026-10-14, Asia/Bangkok
+Device: Samsung SM-A576B, API 36; One UI development property 80500.
+User manually completed Android/Samsung provisioning.
+pm list users: Personal user0 running; user10 Dual Profile managed profile running.
+dumpsys device_policy: Profile Owner User10 com.dualprofile.app/.admin.ProfileAdminReceiver; affiliation IDs empty; no_install_unknown_sources present.
+10:59:07 DPC: Profile owner verified; companion initialized (completion/success callbacks).
+11:00:56 Personal instrumentation: manufacturer=samsung model=SM-A576B sdk=36 packages=503 supported=true provisioningAllowed=false inWork=false owner=false quiet=false.
+11:11:43 Work companion: owner verified; packages=31 installer=false affiliated=false policyBlocked=true.
+11:15:06 Probe installation: IllegalStateException UNKNOWN_SOURCES_NOT_ALLOWED.
+11:15:15 Probe retry: IllegalStateException UNKNOWN_SOURCES_NOT_ALLOWED.
+Screenshot: samsung-install-policy-block.png (Work-badged companion showing policy failure; no target installed success claim).
+Samsung shell test-runner install --user10 denied: SecurityException Shell does not have permission to access user10.
+No policy/security control changed. No Work target installed through ADB. No PackageInstaller commit performed because preflight detects prohibited source.

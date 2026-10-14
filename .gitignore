@@ -1,0 +1,10 @@
+.gradle/
+.gradle-home/
+**/build/
+local.properties
+dist/
+*.jks
+*.keystore
+*.hprof
+
+probe/fixtures/

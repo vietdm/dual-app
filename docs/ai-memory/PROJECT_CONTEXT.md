@@ -1,0 +1,19 @@
+# Project context
+
+Product: Dual Profile, package com.dualprofile.app. Native Kotlin/Compose Material3 DPC supporting max one Personal Account A + one managed Work Account B. Android owns data/process/login/notification separation. Host need not run after target installation. No APK modification, package rename, resigning, root, Shizuku, private APIs, Knox SDK, runtime ADB/shell, proxy notifications or security bypass.
+
+SDK: compile=36, target=36, min=28. Primary target Samsung SM-A576B Android16/API36 OneUI8.5. Generic Android12+ preferred, API28 supported through guarded public APIs. README contains explicit minimum device requirements, not just build dependencies.
+
+Toolchain: JDK17, AGP8.13.1, Kotlin2.2.20/Compose plugin, Gradle8.14-all wrapper, Compose BOM2025.10.00. build.sh validates SDK36/buildtools36, tests/lint/assemble/apksigner/aapt2, emits dist/DualProfile.apk plus lawful probe APK/AAB. Release keys only environment variables.
+
+Provisioning: public ACTION_PROVISION_MANAGED_PROFILE, supported/provisioningAllowed checks, random pairing key in admin extras, protected receiver + mode/compliance/success activities. Work initialization requires actual isProfileOwnerApp and managed profile. No UI automation or RESULT_OK success assumption.
+
+Bridge: custom MIME/action, component disabled in Personal and enabled in Work, DPC cross-profile filter FLAG_MANAGED_CAN_ACCESS_PARENT (parent intent → Work activity). Personal selects OS forwarder discovered by PackageManager. HMACSHA256 authenticated request/reply, timestamp, nonce/replay window. FileProvider read grants transfer exact base and installed split files; digest/package/version verified. Work companion requires local owner. Request secret private preferences; Android backup disabled.
+
+Eligibility: launcher/enabled/noninstant/not self/not critical, readable APK + permitted installer or affiliated existing-package install or evidenced Work store strategy. Conservative all system/updated-system apps excluded. A resolved store URI alone never establishes package eligibility. Work installed state only from authenticated Work PackageManager queries. Resume/profile broadcasts invalidate old capabilities and re-sync; snapshot tied to UserHandle.
+
+Installation: affiliated-only installExistingPackage with SecurityException fallback; PackageInstaller session preserving package/signature/version, optional system confirmation. No downgrade flag. Public Work stores Play then resolved Galaxy; no APK download/mirror/scrape. DPC/OEM controls are preserved.
+
+Physical session facts 2026-10-14 Asia/Bangkok: ADB identified real SM-A576B API36, development property OneUI=80500. User manually completed provisioning. Work user10 and Dual Profile owner confirmed by dumpsys, DPC callbacks logged. Host install/launch and Personal instrumentation smoke tests passed. Work profile has no_install_unknown_sources. Samsung refused ADB test-runner install --user10 with SecurityException; do not bypass. Full Work install/isolation/notification acceptance remains limited by policy and manual evidence; see current report for latest outcomes.
+
+Latest verified build: 21 unit tests pass, lint0errors/34warnings, signed debug APK manifest min28/target36 verified and zipalign16KB pass. Physical Personal tests3executedpass plus1Work-only assumption skip. Screenshot and log confirm Probe preflight UNKNOWN_SOURCES_NOT_ALLOWED; no PI commit/Work app installed. SDK/source/signing preflight failures verified. Official Bundletool1.18.3 fixtures have two ABI variants and resource-language split; Samsung-selected signatures verified.
