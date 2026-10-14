@@ -63,3 +63,13 @@ Optional split fixture: `scripts/prepare-probe-native.sh`, rebuild, then `script
 ## OEM matrix
 
 Run applicable checks on Pixel/AOSP, Samsung primary, other Samsung Android16, Xiaomi, OPPO/OnePlus, Vivo. All nonexecuted cells remain NOT TESTED. MVP has no OEM security workaround or Knox dependency.
+
+## Explicit Work APK permission setup
+
+- [ ] Open permission flow: no setting changes merely by opening or canceling.
+- [ ] Personal/non-owner/other-admin restriction cannot be cleared.
+- [ ] Explicitly confirm own Work-local source policy change, inspect actual DPM state; no Personal/global/OEM change.
+- [ ] Manually grant Dual Profile Work install-source permission through Android UI.
+- [ ] Return, refresh, custom installed-Personal app uses Copy APK to Work without Google/Play.
+- [ ] Cancel consent or system permission: clear failure; no installed success.
+- [ ] Other policy/Auto Blocker remains blocking: no bypass or requests to disable protection.

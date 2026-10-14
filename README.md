@@ -74,9 +74,22 @@ End users can open the APK and use Android's normal installation flow. Runtime h
 
 ## First run
 
-Open Dual Profile → Create Work Profile → accept the **real Android/Samsung setup UI yourself** → return → verify Work companion → select compatible app → Create dual app → confirm inside Work → sign in to Account B. Android may show a cross-profile confirmation screen. There is no assumed screen count or Samsung text automation.
+Open Dual Profile → Create Work Profile → accept the **real Android/Samsung setup UI yourself** → return → verify Work companion → select compatible app → Copy APK to Work or Install via Work store → confirm inside Work → sign in to Account B. Android may show a cross-profile confirmation screen. There is no assumed screen count or Samsung text automation.
 
 Test the supplied Probe before messaging applications. Save A in Personal and B in Work. Schedule its delayed notifications independently; kill only the Dual Profile host. Probe alarms are local notification smoke tests, **not push/Firebase validation**. For actual messaging/reboot push use a lawful app with two accounts and external senders. See [manual checklist](docs/MANUAL_TEST.md).
+
+## Cấp quyền cài APK custom trong Work
+
+Sau khi user yêu cầu cấp quyền, ứng dụng cung cấp luồng **chủ động xác nhận**, không thay đổi bảo mật tự động:
+
+1. Mở Dual Profile ở Personal → **Quyền cài APK custom trong Work**.
+2. Bên Work, chọn **1. Cho phép APK custom trong Work** → đọc scope → **Cho phép trong Work**. DPC chỉ gỡ `DISALLOW_INSTALL_UNKNOWN_SOURCES` do **chính admin Dual Profile** quản lý trong Work. Không gỡ restriction global/install-apps/bên khác hoặc thay đổi Auto Blocker/Play Protect.
+3. Chọn **2. Cấp quyền nguồn cài đặt Android** → tự bật cho phép cài từ **Dual Profile bên Work** trong màn hình Android, nếu được policy cho phép.
+4. **Hoàn tất / quay lại** → refresh Work apps. Custom app đã cài trong Personal có APK đọc được sẽ dùng **Copy APK to Work** khi capability thực tế cho phép.
+
+Nếu policy khác/OEM vẫn chặn, luồng báo hạn chế và không vượt qua. Không cần tài khoản Google cho copy APK. File APK chưa được cài vào Personal không nằm trong scanner của MVP; đây chưa phải tính năng import APK từ file picker.
+
+Nút **Install via Work store** chỉ mở store; nó không copy APK. Nút **Copy APK to Work** mới chạy snapshot/URI transfer/PackageInstaller. CH Play trong Work có tài khoản/dữ liệu riêng; đăng nhập tài khoản Google khác không phải requirement của cơ chế copy APK.
 
 ## Work active / paused
 
@@ -108,7 +121,7 @@ Use Android Settings → Accounts / Work Profile → Remove Work Profile (labels
 8. A Java-only fixture does not prove ABI compatibility. Optional fixture-generation scripts create native ABI/resource splits for physical testing; all requested split variants must be recorded individually.
 9. One UI and Knox framework versions have no supported generic public API here; runtime reports unavailable instead of reading hidden properties. ADB getprop is development-only.
 10. Installation sessions and confirmation intents have private persistent recovery, retry/cancel controls and application-scoped preparation. OEM restrictions can still prevent confirmation UI; no background activity launch bypass.
-11. Physical A57 provisioning succeeded, but the fresh Work profile has `no_install_unknown_sources` policy. The MVP preserves it; unaffiliated APK installation is blocked instead of automatically weakening security. The development Diagnostics Probe spike reports this limitation. Samsung also refuses shell access to Work user 10, so Work instrumentation could not be installed through ADB.
+11. Physical A57 provisioning succeeded, but the fresh Work profile has `no_install_unknown_sources` policy. The MVP preserves it until the user explicitly confirms the new own-Work-policy permission flow; it never changes security automatically. The development Diagnostics Probe spike reports this limitation. Samsung also refuses shell access to Work user 10, so Work instrumentation could not be installed through ADB.
 
 ## OEM matrix
 

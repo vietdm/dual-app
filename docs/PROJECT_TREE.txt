@@ -142,3 +142,10 @@
 ├── gradlew
 ├── gradlew.bat
 └── settings.gradle.kts
+
+Follow-up source additions:
+app/src/main/java/com/dualprofile/app/profile/PolicyConsent.kt
+app/src/main/java/com/dualprofile/app/profile/WorkInstallPolicyActivity.kt
+app/src/main/java/com/dualprofile/app/installer/SessionPolicy.kt
+app/src/test/java/com/dualprofile/app/PolicyConsentTest.kt
+app/src/test/java/com/dualprofile/app/SessionPolicyTest.kt

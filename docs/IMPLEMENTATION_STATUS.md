@@ -6,10 +6,10 @@ Work Profile provisioning: PASS on SM-A576B, manually provisioned user10, actual
 App discovery: PASS (device query503 packages).
 Eligibility detection: PASS automated tests; self excluded at domain/UI, conservative metadata/provenance filters.
 Dual installation: PARTIAL implementation; physical Probe attempt FAIL due UNKNOWN_SOURCES_NOT_ALLOWED.
-Method used: unaffiliated BYOD → PackageInstaller with user-confirmation support; installation-source policy prevents commit. Available verified Work store is fallback for published store-origin packages. No security controls changed.
+Method used: unaffiliated BYOD → PackageInstaller with user-confirmation support; initial preflight refused; follow-up debug Probe committed an actual session and OS denied installation. Available verified Work store is fallback for published store-origin packages. No security controls changed.
 Cross-profile launch: PARTIAL; Personal→Work companion/authenticated state queries PASS; target Open B unverified because no Work Probe installed.
 Build: PASS debug build.sh; manifest package/SDK/signature verified, release missing-signing failure verified.
-Tests: 21 unit passed / 0 failed; device Personal 3 passed / 0 failed / 1 Work-only skipped. Lint 0 errors / 34 warnings. See docs/evidence/build-verification.txt.
+Tests: 29 unit passed / 0 failed; device Personal 3 passed / 0 failed / 1 Work-only skipped. Lint 0 errors / 34 warnings. See docs/evidence/build-verification.txt.
 APK: /home/vietdau33/works/dual-app/dist/DualProfile.apk
 
 Known limitations:
@@ -26,3 +26,5 @@ Source/resources/build/scripts/tests/README/manual checklist/AI Memory and lawfu
 User deferred reboot verification until after delivery (2026-10-14). Quiet-mode toggle was explained; no paused/resumed transition performed in this session. Both remain NOT TESTED.
 
 Full directory tree: docs/PROJECT_TREE.txt. Reproduce with ./build.sh (debug); artifact remains dist/DualProfile.apk.
+
+User-requested permission flow now implemented: own Work-local restriction can be cleared ONLY after explicit in-app consent; Android source permission is manually granted in system UI. Not yet accepted/executed on physical device, so no custom APK success claim. UI distinguishes Copy APK to Work from Install via Work store. Actual base APK transfer/hash/session commit and system policy denial proven (see follow-up evidence).

@@ -19,6 +19,7 @@
         <activity android:name=".crossprofile.WorkBridgeActivity" android:enabled="false" android:exported="true" android:label="@string/bridge_name">
             <intent-filter><action android:name="com.dualprofile.app.WORK_REQUEST"/><category android:name="android.intent.category.DEFAULT"/><data android:mimeType="application/vnd.dualprofile.request"/></intent-filter>
         </activity>
+        <activity android:name=".profile.WorkInstallPolicyActivity" android:exported="false" />
         <receiver android:name=".installer.InstallResultReceiver" android:exported="false" />
         <provider android:name="androidx.core.content.FileProvider" android:authorities="com.dualprofile.app.files" android:exported="false" android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths"/>

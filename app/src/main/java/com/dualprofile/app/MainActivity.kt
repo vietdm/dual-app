@@ -45,7 +45,7 @@ class MainActivity: ComponentActivity() {
   try {
    if(result.resultCode==RESULT_OK && result.data!=null && nonce!=null) {
     vm.workResponse(Protocol.readResponse(this,result.data!!,nonce!!))
-    if(pendingCommand=="install" || pendingCommand=="store") { attemptedSync=false; vm.invalidateWork() }
+    if(pendingCommand=="install" || pendingCommand=="store" || pendingCommand=="policy") { attemptedSync=false; vm.invalidateWork() }
    } else vm.message("Work operation was canceled or could not be verified. Open Dual Profile using its Work badge and retry.")
   } catch(e: Exception) { DPLog.failure("CrossProfile",e); vm.message("Could not authenticate Work response.") }
   nonce=null; pendingCommand=null
@@ -74,6 +74,7 @@ class MainActivity: ComponentActivity() {
      LazyColumn(Modifier.safeDrawingPadding().padding(horizontal=20.dp),verticalArrangement=Arrangement.spacedBy(14.dp),contentPadding=PaddingValues(vertical=20.dp)) {
       item { Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween) { Text("Dual Profile",style=MaterialTheme.typography.headlineMedium); TextButton(onClick={diagnostics=!diagnostics}) { Text(if(diagnostics) "Home" else "Diagnostics") } } }
       item { Row(horizontalArrangement=Arrangement.spacedBy(8.dp)) { listOf("System","Light","Dark").forEach { t -> FilterChip(selected=theme==t,onClick={theme=t; prefs.edit().putString("theme",t).apply()},label={Text(t)}) } } }
+      if(diagnostics && state.message!=null) item { Text(state.message!!); TextButton(onClick={vm.message(null)}) { Text("Dismiss") } }
       if(diagnostics) {
        item { Text(Diagnostics.describe(this@MainActivity,p ?: vm.profiles.snapshot(),state.ownerVerified,nonce==null && state.ownerVerified),style=MaterialTheme.typography.bodySmall) }
        if(state.workDiagnostics!=null) item { Text("Live Work companion diagnostics\n${state.workDiagnostics}",style=MaterialTheme.typography.bodySmall) }
@@ -83,9 +84,9 @@ class MainActivity: ComponentActivity() {
          try {
           val probe=vm.state.value.apps.firstOrNull { it.facts.packageName=="com.dualprofile.probe" } ?: error("Install the supplied Probe APK in Personal first.")
           val transfer=withContext(Dispatchers.IO) { ApkTransfer.snapshot(this@MainActivity,probe) }
-          send("install",transfer.first,transfer.second)
+          send("install",transfer.first.put("probeDiagnosticAttempt",true),transfer.second)
          } catch(e: Exception) { vm.message(e.message ?: "Probe preparation failed.") } finally { preparing=false }
-        } }) { Text("Test Probe installation (development)") }
+        } }) { Text("Test Probe with Android installer") }
         Text("This technical spike may be refused by Work installation policy. It does not bypass policy or establish eligibility.",style=MaterialTheme.typography.bodySmall)
        }
        item { Text("Application eligibility",style=MaterialTheme.typography.titleLarge) }
@@ -102,6 +103,8 @@ class MainActivity: ComponentActivity() {
          state.ownerVerified -> { Text("● Active · Owner verified"); Text("Personal = Account A · Work = Account B"); OutlinedButton(onClick={sync()}) { Text("Refresh Work apps") } }
          else -> { Text("Work Profile detected · Management unverified"); Text("If another application manages this profile, Dual Profile cannot create or take over another Work Profile. Open the Work companion to inspect setup."); OutlinedButton(onClick={attemptedSync=true; sync()}) { Text("Verify Work companion") } }
         }
+        if(p?.work!=null && !p.quiet && !p.inWork && state.ownerVerified) OutlinedButton(onClick={send("policy",JSONObject())},enabled=nonce==null) { Text("Quyền cài APK custom trong Work") }
+        if(p?.inWork==true && p.owner) OutlinedButton(onClick={startActivity(Intent(this@MainActivity,com.dualprofile.app.profile.WorkInstallPolicyActivity::class.java))}) { Text("Quyền cài APK custom trong Work") }
        } } }
        if(state.message!=null) item { Card { Column(Modifier.padding(14.dp)) { Text(state.message!!); TextButton(onClick={vm.message(null)}) { Text("Dismiss") } } } }
        item { OutlinedTextField(value=query,onValueChange={query=it},label={Text("Search applications…")},singleLine=true,modifier=Modifier.fillMaxWidth()) }
@@ -119,7 +122,7 @@ class MainActivity: ComponentActivity() {
           if(app.workInstalled) Button(enabled=p?.quiet!=true,onClick={send("open",JSONObject().put("package",app.facts.packageName).put("storeSource",app.facts.storeSource ?: ""))}) { Text("Open B") }
           else Button(enabled=p?.quiet!=true && nonce==null && !preparing,onClick={
            if(app.installMethod==InstallMethod.STORE) send("store",JSONObject().put("package",app.facts.packageName).put("storeSource",app.facts.storeSource ?: "")) else lifecycleScope.launch { vm.operation(app.facts.packageName,InstallState.CREATING); preparing=true; vm.message("Preparing base APK and splits…"); try { val transfer=withContext(Dispatchers.IO) { ApkTransfer.snapshot(this@MainActivity,app) }; send("install",transfer.first,transfer.second) } catch(e: Exception) { DPLog.failure("Install",e); vm.message("APK files could not be read. Refresh or use an available Work app store."); if(app.facts.storeVerified) send("store",JSONObject().put("package",app.facts.packageName).put("storeSource",app.facts.storeSource ?: "")) } finally { preparing=false } }
-          }) { Text("Create dual app") }
+          }) { Text(if(app.installMethod==InstallMethod.STORE) "Install via Work store" else "Copy APK to Work") }
          }
         } }
        }

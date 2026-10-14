@@ -28,8 +28,11 @@ object WorkInstaller {
   if(existingAllowed(c)) try { if(profile.dpm.installExistingPackage(profile.admin,pkg) && installed(c,pkg)) return -1 } catch(e: SecurityException) { DPLog.failure("Install",e) }
   val users=c.getSystemService(UserManager::class.java)
   check(!users.hasUserRestriction(UserManager.DISALLOW_INSTALL_APPS)) { InstallError.SECURITY_POLICY_BLOCKED.name }
-  check(!users.hasUserRestriction(UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES) && (Build.VERSION.SDK_INT<29 || !users.hasUserRestriction(UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES_GLOBALLY))) { InstallError.UNKNOWN_SOURCES_NOT_ALLOWED.name }
-  check(installerAvailable(c)) { InstallError.PACKAGE_INSTALLER_UNAVAILABLE.name }
+  val diagnosticAttempt=BuildConfig.DEBUG && pkg=="com.dualprofile.probe" && body.optBoolean("probeDiagnosticAttempt")
+  val unknownBlocked=users.hasUserRestriction(UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES) || (Build.VERSION.SDK_INT>=29 && users.hasUserRestriction(UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES_GLOBALLY))
+  if(diagnosticAttempt) DPLog.info("Install","Probe diagnostic: invoking public session with unknown-source restriction=$unknownBlocked; no setting changed")
+  check(sessionPreflightAllowsAttempt(BuildConfig.DEBUG,pkg,body.optBoolean("probeDiagnosticAttempt"),users.hasUserRestriction(UserManager.DISALLOW_INSTALL_APPS),unknownBlocked)) { InstallError.UNKNOWN_SOURCES_NOT_ALLOWED.name }
+  check(diagnosticAttempt || installerAvailable(c)) { InstallError.PACKAGE_INSTALLER_UNAVAILABLE.name }
   // A profile owner is an enterprise installation source; Android still owns confirmation/policy decisions.
   val files=body.getJSONArray("files"); require(files.length() in 1..128 && clip?.itemCount==files.length())
   val stage=File(c.cacheDir,"verified_${UUID.randomUUID()}").apply { mkdirs() }
@@ -42,13 +45,14 @@ object WorkInstaller {
     val length=entry.getLong("size"); total+=length; require(length>0 && total<=2_147_483_648L)
     val file=File(stage,if(i==0) "base.apk" else "split_$i.apk")
     c.contentResolver.openInputStream(uri).use { input -> requireNotNull(input); file.outputStream().use { out -> val buffer=ByteArray(65536); var count=0L; while(true) { val n=input.read(buffer); if(n<0) break; count+=n; require(count<=length); out.write(buffer,0,n) }; require(count==length) } }
-    require(ApkTransfer.sha(file)==entry.getString("sha")) { "APK integrity check failed" }; file
+    require(ApkTransfer.sha(file)==entry.getString("sha")) { "APK integrity check failed" }; DPLog.info("Install","Verified unchanged APK file $i bytes=${file.length()}"); file
    }
    val archive=c.packageManager.getPackageArchiveInfo(apks.first().path,PackageManager.GET_SIGNING_CERTIFICATES) ?: error("Invalid base APK")
    require(archive.packageName==pkg && archive.longVersionCode==body.getLong("version")) { "Application version changed; refresh and retry" }
    val pi=c.packageManager.packageInstaller
    val params=PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL).apply { setAppPackageName(pkg); setSize(total); if(Build.VERSION.SDK_INT>=31) setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_REQUIRED) }
    sessionId=pi.createSession(params)
+   DPLog.info("Install","PackageInstaller created session=$sessionId apkCount=${apks.size}")
    check(c.getSharedPreferences("install",Context.MODE_PRIVATE).edit().putInt("request_$requestNonce",sessionId).commit())
    pi.openSession(sessionId).use { session ->
     apks.forEach { file -> session.openWrite(file.name,0,file.length()).use { output -> file.inputStream().use { it.copyTo(output) }; session.fsync(output) } }
@@ -56,6 +60,7 @@ object WorkInstaller {
     val callback=Intent(c,InstallResultReceiver::class.java).setAction(RESULT_ACTION).putExtra("session",sessionId)
     val flags=PendingIntent.FLAG_UPDATE_CURRENT or (if(Build.VERSION.SDK_INT>=31) PendingIntent.FLAG_MUTABLE else 0)
     session.commit(PendingIntent.getBroadcast(c,sessionId,callback,flags).intentSender)
+    DPLog.info("Install","PackageInstaller session=$sessionId committed; waiting for OS result")
    }
    return sessionId
   } catch(e: Exception) { if(sessionId>=0) runCatching { c.packageManager.packageInstaller.abandonSession(sessionId) }; throw e } finally { stage.deleteRecursively() }
@@ -67,7 +72,7 @@ class InstallResultReceiver: BroadcastReceiver() {
   val status=intent.getIntExtra(PackageInstaller.EXTRA_STATUS,PackageInstaller.STATUS_FAILURE)
   val id=intent.getIntExtra("session",-1); val prefs=context.getSharedPreferences("install",Context.MODE_PRIVATE)
   val pkg=prefs.getString("package_$id",null) ?: return
-  val error=when(status) { PackageInstaller.STATUS_SUCCESS -> InstallError.INSTALL_ALLOWED; PackageInstaller.STATUS_PENDING_USER_ACTION -> InstallError.USER_CONFIRMATION_REQUIRED; PackageInstaller.STATUS_FAILURE_BLOCKED -> InstallError.SECURITY_POLICY_BLOCKED; PackageInstaller.STATUS_FAILURE_CONFLICT -> InstallError.VERSION_OR_SIGNATURE_CONFLICT; PackageInstaller.STATUS_FAILURE_ABORTED -> InstallError.INSTALLATION_CANCELED; PackageInstaller.STATUS_FAILURE_INCOMPATIBLE -> InstallError.INCOMPATIBLE_APK_SET; PackageInstaller.STATUS_FAILURE_INVALID -> InstallError.INVALID_APK; PackageInstaller.STATUS_FAILURE_STORAGE -> InstallError.INSUFFICIENT_STORAGE; else -> InstallError.NO_VALID_INSTALL_METHOD }
+  val error=when(status) { PackageInstaller.STATUS_SUCCESS -> InstallError.INSTALL_ALLOWED; PackageInstaller.STATUS_PENDING_USER_ACTION -> InstallError.USER_CONFIRMATION_REQUIRED; PackageInstaller.STATUS_FAILURE_BLOCKED -> InstallError.SECURITY_POLICY_BLOCKED; PackageInstaller.STATUS_FAILURE_CONFLICT -> InstallError.VERSION_OR_SIGNATURE_CONFLICT; PackageInstaller.STATUS_FAILURE_ABORTED -> if(context.getSystemService(UserManager::class.java).hasUserRestriction(UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES)) InstallError.UNKNOWN_SOURCES_NOT_ALLOWED else InstallError.INSTALLATION_CANCELED; PackageInstaller.STATUS_FAILURE_INCOMPATIBLE -> InstallError.INCOMPATIBLE_APK_SET; PackageInstaller.STATUS_FAILURE_INVALID -> InstallError.INVALID_APK; PackageInstaller.STATUS_FAILURE_STORAGE -> InstallError.INSUFFICIENT_STORAGE; else -> InstallError.NO_VALID_INSTALL_METHOD }
   prefs.edit().putString("state_$id",mapInstallState(status,WorkInstaller.installed(context,pkg)).name).putString("error_$id",error.name).commit()
   if(status==PackageInstaller.STATUS_PENDING_USER_ACTION) {
    val confirm=androidx.core.content.IntentCompat.getParcelableExtra(intent,Intent.EXTRA_INTENT,Intent::class.java)

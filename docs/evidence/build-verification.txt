@@ -12,3 +12,7 @@ Executed: discovery/public profile APIs, MainActivity launch, rejecting fully-ma
 Work-only owner/policy test could not run due Samsung shell user10 restriction; do not count as physical Work PASS.
 zipalign -c -P16 4: exit0 (16KB native ZIP alignment).
 Samsung-selected split APK signatures: apksigner verify exit0 for base-master_2, arm64_v8a, vi.
+
+Follow-up permission flow build: 29 unit passed,0 failed; lint0errors/35warnings; manifest/signature verified by build.sh. Policy consent tests observed compile failure before helper implementation, then passed. Independent review found no security blocker; restored-policy-launch duplication fixed. No consent/policy mutation or Android source grant executed by agent.
+
+Latest APK installed successfully. Read-only physical permission UI smoke passed: authenticated Work route, owner=true, own restriction=true, effective block=true, source permission=false; no mutation.

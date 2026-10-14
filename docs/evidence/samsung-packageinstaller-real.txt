@@ -1,0 +1,11 @@
+2026-10-14 Asia/Bangkok, physical SM-A576B Android16/API36.
+Authenticated debug Probe-only diagnostic invoked public PackageInstaller without changing any policy or source/security setting.
+11:51:36.303 Probe diagnostic: unknown-source restriction=true, no setting changed.
+11:51:36.323 Work verified unchanged APK file0, bytes2476577 (SHA256 matches Personal manifest).
+11:51:36.343 PackageInstaller created session210660213, apkCount1.
+11:51:36.369 session committed; waiting for OS result.
+11:51:36.391 OS callback STATUS_PENDING_USER_ACTION=-1; package not installed.
+11:51:36.838 OS callback STATUS_FAILURE_ABORTED=3; package not installed.
+System UI screenshot: Hành động không được phép. Chưa được cấp quyền; liên hệ quản trị IT.
+This supersedes the earlier preflight-only inference: URI transfer/base validation/session commit now actually tested; OS installation still failed under unchanged policy.
+No custom APK installation success claimed. No Google Play download used for this spike.

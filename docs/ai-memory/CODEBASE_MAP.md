@@ -8,6 +8,8 @@
 | Domain.kt | pure eligibility, install errors/states, sorting/search, profile abstraction |
 | admin/ProfileAdminReceiver.kt | completion callback, protected profile broadcasts |
 | admin/ProvisioningActivity.kt | modern mode/compliance/success activities |
+| profile/WorkInstallPolicyActivity.kt, PolicyConsent.kt | user-confirmed own Work-local policy change + manual Android source permission; private owner-gated Activity |
+| installer/SessionPolicy.kt | allows only debug lawful Probe to reach OS for diagnostic; no security permission granted |
 | profile/ProfileManager.kt | support, provisioning, owner initialization, quiet/resume |
 | packages/AppRepository.kt | package metadata/source/critical filters, icon LRU application context |
 | crossprofile/Protocol.kt, Authentication.kt, ReplayWindow.kt | pairing/HMAC/expiry/replay, authenticated results |

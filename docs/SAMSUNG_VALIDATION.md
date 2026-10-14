@@ -28,7 +28,7 @@ Create Work instance:
 FAIL - lawful Probe blocked by Work installation-source policy
 
 PackageInstaller:
-PARTIAL - implementation/build verified, source-policy preflight blocks before session commit
+PARTIAL - actual base transfer/verification/session commit succeeds; Android policy refuses installation
 
 Open Personal instance:
 NOT TESTED - target Open A button acceptance not yet executed
@@ -70,7 +70,7 @@ No Samsung security control or Work restriction was disabled.
 - Probe installed legally in Personal via development ADB. User invoked Diagnostics → Test Probe installation → Work Install unchanged application, then Retry. Both returned `UNKNOWN_SOURCES_NOT_ALLOWED`.
 - [Actual screenshot](evidence/samsung-install-policy-block.png) shows Work-badged companion and source-policy error. [Condensed diagnostic evidence](evidence/samsung-spike.txt).
 
-This is **not a successful dual-instance PoC**: provisioning and companion work, but the required local Probe cannot currently be installed in Work while preserving the observed policy. The installer intentionally refuses before creating/committing a session; no PackageInstaller STATUS_SUCCESS or independent Work data/notification evidence exists. A store-resolvable URI alone does not make unpublished Probe eligible. Public installation policy handling follows [UserManager restrictions](https://developer.android.com/reference/android/os/UserManager); affiliation follows [DevicePolicyManager.installExistingPackage](https://developer.android.com/reference/android/app/admin/DevicePolicyManager#installExistingPackage(android.content.ComponentName,%20java.lang.String)).
+This is **not a successful dual-instance PoC**: provisioning and companion work, but the required local Probe cannot currently be installed in Work while preserving the observed policy. Initial attempt stopped at local preflight. Follow-up debug Probe-only diagnostic actually transferred/verified the base APK and committed a public PackageInstaller session. OS returned pending-user-action then aborted and displayed a policy refusal. No PackageInstaller STATUS_SUCCESS or independent Work data/notification evidence exists. A store-resolvable URI alone does not make unpublished Probe eligible. Public installation policy handling follows [UserManager restrictions](https://developer.android.com/reference/android/os/UserManager); affiliation follows [DevicePolicyManager.installExistingPackage](https://developer.android.com/reference/android/app/admin/DevicePolicyManager#installExistingPackage(android.content.ComponentName,%20java.lang.String)).
 
 ## Split test status
 
@@ -87,3 +87,9 @@ This is **not a successful dual-instance PoC**: provisioning and companion work,
 Do not use ADB install --user10 to claim Dual Profile installation success. No third-party application testing was advanced past the failed Probe spike. Remaining acceptance checklist: docs/MANUAL_TEST.md.
 
 User deferred reboot verification until after delivery (2026-10-14). Quiet-mode toggle was explained; no paused/resumed transition performed in this session. Both remain NOT TESTED.
+
+## Follow-up actual PackageInstaller spike
+
+See [real OS policy dialog](evidence/samsung-packageinstaller-real-policy-block.png) and [session log](evidence/samsung-packageinstaller-real.txt). APK bytes/hash verified inside Work; session210660213 committed; OS denied installation under unchanged policy. No Google Play used in this test. User has requested a way to grant permissions; explicit own-Work-policy consent screen and manual Android source-permission flow now implemented, but its mutation/installation result has not been validated yet because user consent is still required.
+
+Permission review screen opened successfully via authenticated bridge on SM-A576B. Actual public API state: Dual Profile owns Work; its own local source restriction is active; effective install policy blocked; Android source permission not granted. [Screenshot](evidence/samsung-work-policy-review.png). No Allow/consent/source-setting button pressed by agent. This confirms an owner-managed policy setup gap, not a blanket impossibility of custom APKs on Samsung.

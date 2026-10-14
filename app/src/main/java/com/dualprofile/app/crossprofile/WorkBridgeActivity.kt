@@ -25,6 +25,9 @@ class WorkBridgeActivity: ComponentActivity() {
  private var storePackage: String?=null
  private var storeSource: String?=null
  private var busy by mutableStateOf(false)
+ private val policy=registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()) { result ->
+  respond(JSONObject().put("message",result.data?.getStringExtra("message") ?: "Work installation policy unchanged; refresh to verify.").put("policyChecked",true))
+ }
  override fun onCreate(savedInstanceState: Bundle?) {
   super.onCreate(savedInstanceState)
   setContent { MaterialTheme { Surface(Modifier.fillMaxSize()) { Column(Modifier.safeDrawingPadding().padding(24.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
@@ -50,6 +53,7 @@ class WorkBridgeActivity: ComponentActivity() {
      DPLog.info("CrossProfile","Work owner verified; packages=${packages.length()} installer=${WorkInstaller.installerAvailable(this)} affiliated=${WorkInstaller.existingAllowed(this)} policyBlocked=${WorkInstaller.restrictions(this)}")
      respond(JSONObject().put("owner",true).put("packages",status).put("diagnostics",com.dualprofile.app.diagnostics.Diagnostics.describe(this,ProfileManager(this).snapshot(),true,true)).put("message","Work Profile owner verified. App capabilities refreshed."))
     }
+    "policy" -> if(savedInstanceState==null) policy.launch(Intent(this,com.dualprofile.app.profile.WorkInstallPolicyActivity::class.java)) else message="Đang kiểm tra quyền cài APK trong Work…"
     "open" -> { val pkg=body.getString("package"); require(Protocol.validPackage(pkg)); startActivity(packageManager.getLaunchIntentForPackage(pkg) ?: error("No Work launcher for this application. Use its Work badge in the launcher.")); respond(JSONObject().put("message","Work application opened.")) }
     "store" -> { val pkg=body.getString("package"); require(Protocol.validPackage(pkg) && storeSource!=null); storePackage=pkg; openStore(pkg) }
     "install" -> {
